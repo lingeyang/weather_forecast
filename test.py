@@ -27,7 +27,6 @@ def readFile(filePath, dateName, foretimeName, stationName):
     
     with open("./transform_data/trainingset.csv","w") as f:
         writer = csv.writer(f)
-        writer.writerows(a)
         for dateIndex in range(len(date)):
             for foretimeIndex in range(len(foretimes)):
                 for stationIndex in range(len(stations)):
@@ -44,7 +43,7 @@ def readFile(filePath, dateName, foretimeName, stationName):
                             f = str(f)
                         tmp.append(f)
                     res.append([day, foretime, station] + tmp)
-        
+        writer.writerows(res)
     
     
 if __name__ == "__main__":
