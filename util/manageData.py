@@ -40,6 +40,7 @@ def transformData(filePath,dumpPath):
 if __name__ == "__main__":
     filePath = '../data/wf2018_trainingset_20150301-20180531.nc'
     dumpPath = '../transform_data/trainingset.npy'
+    # run this function
     #transformData(filePath, dumpPath)
 
 
