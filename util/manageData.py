@@ -17,31 +17,33 @@ cmds = ['psfc_M', 't2m_M', 'q2m_M', 'rh2m_M', 'w10m_M', 'd10m_M', \
        'rh2m_obs', 'u10m_obs', 'v10m_obs', 'RAIN_obs']
 
 
-def transformData(filePath,dumpPath):
+def transformData(filePath,dumpDir):
     '''
     filePath : the data's path, '*.nc'
-    dumpPath : the processed data's path, '*.npy'
+    dumpPath : the processed data's path, '{stationID}.npy'
     '''
     data = Dataset(filePath)
     variables = data.variables
-    res = None
+    featureTuple = []
     for cmd in cmds:
-        feature = np.array(variables[cmd])
-        (day, time, station) = feature.shape
-        feature = feature.reshape((day*time*station,1))
-        if type(res) == type(None):
-            res = feature
-        else:
-            # join
-            res = np.concatenate((res,feature),axis=1)
-    print(res)
-    #np.save(dumpPath,res)
+        dataArray = np.array(variables[cmd])
+        (dayDim, timeDim, stationDim) = dataArray.shape
+        feature = dataArray.reshape((dayDim*timeDim, 10)).T
+        featureTuple.append(feature)
+
+    res = np.stack(featureTuple,axis=1)
+    
+    for station in range(10):
+        sdata = res[station].T
+        dumpPath = '%s/station_%d.npy' % (dumpDir, 90001+station)
+        
+        np.save(dumpPath,sdata)
         
 if __name__ == "__main__":
     filePath = '../data/wf2018_trainingset_20150301-20180531.nc'
-    dumpPath = '../transform_data/trainingset.npy'
+    dumpDir = '../transform_data'
     # run this function
-    transformData(filePath, dumpPath)
+    #transformData(filePath, dumpDir)
 
 
 
