@@ -24,12 +24,12 @@ def transformData(filePath,dumpPath):
     '''
     data = Dataset(filePath)
     variables = data.variables
-    res = []
+    res = None
     for cmd in cmds:
         feature = np.array(variables[cmd])
         (day, time, station) = feature.shape
         feature = feature.reshape((day*time*station,1))
-        if len(res) == 0:
+        if res == None:
             res = feature
         else:
             # join
