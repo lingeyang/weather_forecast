@@ -29,19 +29,19 @@ def transformData(filePath,dumpPath):
         feature = np.array(variables[cmd])
         (day, time, station) = feature.shape
         feature = feature.reshape((day*time*station,1))
-        if res == None:
+        if type(res) == type(None):
             res = feature
         else:
             # join
             res = np.concatenate((res,feature),axis=1)
-    #print(res)
-    np.save(dumpPath,res)
+    print(res)
+    #np.save(dumpPath,res)
         
 if __name__ == "__main__":
     filePath = '../data/wf2018_trainingset_20150301-20180531.nc'
     dumpPath = '../transform_data/trainingset.npy'
     # run this function
-    #transformData(filePath, dumpPath)
+    transformData(filePath, dumpPath)
 
 
 
