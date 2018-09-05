@@ -3,11 +3,13 @@
 import numpy as np
 
 def getFeature(trainSetPath):
-    pass
+    data = np.load(trainSetPath)
+    
+    print(data.shape)
     
 
 if __name__ == '__main__':
-    trainSetPath = '../transform_data/trainingset.npy'
+    trainSetPath = '../transform_data/trainingset/station_90001.npy'
     getFeature(trainSetPath)
 
 
