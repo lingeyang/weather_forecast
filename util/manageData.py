@@ -3,6 +3,7 @@
 from netCDF4 import Dataset
 import warnings
 import numpy as np
+import os
 
 warnings.filterwarnings('ignore')
 
@@ -11,9 +12,12 @@ def transformData(filePath,dumpDir):
     filePath : the data's path, '*.nc'
     dumpPath : the processed data's path, '{stationID}.npy'
     '''
+    isExists=os.path.exists(dumpDir)
+    if not isExists:
+        os.makedirs(dumpDir)
+    
     # weather info 
     info = np.load('infoConf.npy')
-
     data = Dataset(filePath)
     variables = data.variables
     (dayDim, timeDim, stationDim) = variables[info[0]].shape
