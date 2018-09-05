@@ -24,10 +24,12 @@ def transformData(filePath,dumpDir):
     '''
     data = Dataset(filePath)
     variables = data.variables
+    (dayDim, timeDim, stationDim) = variables[cmds[0]].shape
+    
     featureTuple = []
     for cmd in cmds:
         dataArray = np.array(variables[cmd])
-        (dayDim, timeDim, stationDim) = dataArray.shape
+        
         feature = dataArray.reshape((dayDim*timeDim, 10)).T
         featureTuple.append(feature)
 
@@ -35,15 +37,16 @@ def transformData(filePath,dumpDir):
     
     for station in range(10):
         sdata = res[station].T
-        dumpPath = '%s/station_%d.npy' % (dumpDir, 90001+station)
         
+        sdata = sdata.reshape((dayDim, timeDim, len(cmds)))
+        dumpPath = '%s/station_%d.npy' % (dumpDir, 90001+station)
         np.save(dumpPath,sdata)
         
 if __name__ == "__main__":
     filePath = '../data/wf2018_trainingset_20150301-20180531.nc'
-    dumpDir = '../transform_data'
+    dumpDir = '../transform_data/trainingset'
     # run this function
-    #transformData(filePath, dumpDir)
+    transformData(filePath, dumpDir)
 
 
 
