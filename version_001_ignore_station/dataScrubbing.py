@@ -2,16 +2,20 @@
 
 import numpy as np
 
-def getFeature(trainSetPath):
+obs_index = 29 # this index is 'psur_obs'
+
+def getFeature(trainSetPath,lastNDays):
     data = np.load(trainSetPath)
-    
-    print(data.shape)
+    dataLen = len(data)
+    for index in range(lastNDays,dataLen):
+        train = data[index-lastNDays:index]
+        
     
 
 if __name__ == '__main__':
     trainSetPath = '../transform_data/trainingset/station_90001.npy'
-    getFeature(trainSetPath)
-
+    lastNDays = 1
+    getFeature(trainSetPath,lastNDays)
 
 
 
