@@ -41,9 +41,9 @@ def transformData(filePath,dumpDir):
         
 if __name__ == "__main__":
     filePath = '../data/wf2018_trainingset_20150301-20180531.nc'
-    dumpDir = '../transform_data'
+    dumpDir = '../transform_data/trainingset'
     # run this function
-    #transformData(filePath, dumpDir)
+    transformData(filePath, dumpDir)
 
 
 
