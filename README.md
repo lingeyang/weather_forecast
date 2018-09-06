@@ -2,8 +2,7 @@
 
 work for tomorrow
 
-PLAN:
-2018/09/01 - 2018/09/10    complete version_001
-2018/09/10 - 2018/09/21    extract features
+为方便clone,没有提交官方给定数据集,请自行下载,并统一放在项目根目录data下.
 
-Pending .... (Holiday)
+
+另外注意git提交不要加上这些文件.
