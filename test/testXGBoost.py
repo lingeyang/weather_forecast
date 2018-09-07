@@ -10,7 +10,7 @@ data = np.array(data)
 X = data[:,0].reshape(len(data),1)
 y = data[:,1]
 
-rs=ShuffleSplit(n_splits=1,test_size=.25,random_state=0)
+rs=ShuffleSplit(n_splits=1,test_size=.1,random_state=0)
 rs.get_n_splits(X)
 
 X_train,X_test,y_train,y_test = None,None,None,None
@@ -32,7 +32,6 @@ xlf = xgb.XGBRegressor(max_depth=3,
                         reg_lambda=1,
                         missing=None)
 
-xlf.fit(X_train, y_train, eval_metric='rmse', \
-        verbose = True, eval_set = [(X_test, y_test)])
+xlf.fit(X_train, y_train, eval_metric='rmse')
 preds = xlf.predict(X_test)
 print(sum((preds - y_test)**2))
