@@ -12,8 +12,12 @@ def transformData(filePath,dumpDir):
     filePath : the data's path, '*.nc'
     dumpPath : the processed data's path, '{stationID}.npy'
     '''
-    isExists=os.path.exists(dumpDir)
-    if not isExists:
+    fileisExists = os.path.exists(filePath)
+    if not fileisExists:
+        print('file not found')
+        return
+    dumpDirisExists=os.path.exists(dumpDir)
+    if not dumpDirisExists:
         os.makedirs(dumpDir)
     
     # weather info 
@@ -31,7 +35,7 @@ def transformData(filePath,dumpDir):
 
     res = np.stack(featureTuple,axis=1)
     
-    for station in range(10):
+    for station in range(len(stationDim)):
         sdata = res[station].T
         
         sdata = sdata.reshape((dayDim, timeDim, len(info)))

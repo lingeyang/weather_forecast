@@ -10,7 +10,6 @@ def getFeature(trainSetPath,lastNDays):
     for index in range(lastNDays,dataLen):
         train = data[index-lastNDays:index]
         
-    
 
 if __name__ == '__main__':
     trainSetPath = '../transform_data/trainingset/station_90001.npy'

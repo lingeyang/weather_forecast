@@ -19,25 +19,20 @@ for train_index,test_index in rs.split(X,y):
     X_train,X_test=X[train_index],X[test_index]
     y_train,y_test=y[train_index],y[test_index]
 
-xlf = xgb.XGBRegressor(max_depth=5, 
-                        learning_rate=0.01, 
-                        n_estimators=10, 
-                        silent=True, 
-                        objective='reg:linear', 
-                        nthread=-1, 
+xlf = xgb.XGBRegressor(max_depth=3,
+                        learning_rate=0.1,
+                        n_estimators=30,
+                        silent=True,
+                        objective='reg:linear',
+                        booster='gbtree',
                         gamma=0,
-                        min_child_weight=1, 
-                        max_delta_step=0, 
-                        subsample=0.85, 
-                        colsample_bytree=0.7, 
-                        colsample_bylevel=1, 
-                        reg_alpha=0, 
-                        reg_lambda=1, 
-                        scale_pos_weight=1, 
-                        seed=1440, 
+                        subsample=0.85,
+                        colsample_bytree=1,
+                        colsample_bylevel=1,
+                        reg_lambda=1,
                         missing=None)
 
 xlf.fit(X_train, y_train, eval_metric='rmse', \
-        verbose = True, eval_set = [(X_test, y_test)],early_stopping_rounds=100)
+        verbose = True, eval_set = [(X_test, y_test)])
 preds = xlf.predict(X_test)
-
+print(sum((preds - y_test)**2))
