@@ -2,18 +2,24 @@
 
 import numpy as np
 
-obs_index = 29 # this index is 'psur_obs'
+infoBoundPath = './util/infoBound.json'
+infoIndexPath = './util/infoIndex.json'
+infoConf = './util/infoConf.npy'
 
-def getFeature(trainSetPath):
+def getTrainFeature(trainSetPath):
     data = np.load(trainSetPath)
     dataLen = len(data)
-    print(data[1][0])
+    print(data.shape)
     #for index in rang e(lastNDays,dataLen):
      #   train = data[index-lastNDays:index]
+     
+def getTestFeature(testPath):
+    pass
+
 
 if __name__ == '__main__':
-    trainSetPath = '../transform_data/validation/station_90001.npy'
-    getFeature(trainSetPath)
+    trainSetPath = '../transform_data/trainingset/station_90001.npy'
+    getTrainFeature(trainSetPath)
 
 
 
