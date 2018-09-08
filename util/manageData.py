@@ -68,7 +68,11 @@ if __name__ == "__main__":
     
     infoConf = 'infoConf.npy'
     # run this function
-    transformData(filePath, dumpDir, infoConf)
-
+    #transformData(filePath, dumpDir, infoConf)
+    d = Dataset(filePath)
+    v = d.variables['Q700_M']
+    v = np.array(v)
+    print(v.shape)
+    
 
 
