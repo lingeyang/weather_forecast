@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+
 import  json
 TrainingPath=r"../transform_data/trainingset/station_900"
 WindowSize=0
@@ -54,6 +55,7 @@ def dataScrub():
     np.save("datax",datax)
     np.save("datay",datay)
 dataScrub()
+
 
 
 
