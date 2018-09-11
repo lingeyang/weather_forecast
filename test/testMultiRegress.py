@@ -2,7 +2,7 @@
 
 from sklearn.datasets import make_regression
 from xgboost import XGBRegressor
-from sklearn.multioutput import MultiOutputRegressor as mor
+from sklearn.multioutput import MultiOutputRegressor
 from sklearn import metrics
 
 def multiXGBoost():
@@ -28,7 +28,7 @@ def multiXGBoost():
                         seed=1440, 
                         missing=None)
     
-    clf = mor(xlf)
+    clf = MultiOutputRegressor(xlf)
     clf.fit(x_train, y_train)
     y_pred = clf.predict(x_test)
     
