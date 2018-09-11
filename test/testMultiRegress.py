@@ -2,18 +2,19 @@
 
 from sklearn.datasets import make_regression
 from xgboost import XGBRegressor
-from sklearn.multioutput import MultiOutputRegressor as mor
+from sklearn.multioutput import MultiOutputRegressor
 from sklearn import metrics
 
 def multiXGBoost():
-    X, y = make_regression(n_samples=5000, n_features=100, \
-                           n_targets=33,random_state=1)
-    x_train, y_train = X[:4500], y[:4500]
-    x_test, y_test = X[4500:], y[4500:]
+    X, y = make_regression(n_samples=1000, n_features=20, \
+                           n_targets=20,random_state=1)
     
-    xlf = XGBRegressor(max_depth=3, 
-                        learning_rate=0.01, 
-                        n_estimators=2, 
+    x_train, y_train = X[:800], y[:800]
+    x_test, y_test = X[200:], y[200:]
+    
+    xlf = XGBRegressor(max_depth=10, 
+                        learning_rate=0.1, 
+                        n_estimators=36, 
                         silent=True, 
                         objective='reg:linear', 
                         gamma=0,
@@ -28,11 +29,10 @@ def multiXGBoost():
                         seed=1440, 
                         missing=None)
     
-    clf = mor(xlf)
+    clf = MultiOutputRegressor(xlf)
     clf.fit(x_train, y_train)
     y_pred = clf.predict(x_test)
-    
-    print(y_pred[0])
+    est = clf.estimators_[0]
     cost = metrics.mean_squared_error(y_pred, y_test)
     print(cost)
     
