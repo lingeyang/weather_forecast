@@ -1,48 +1,86 @@
 # -*- coding: utf-8 -*-
 
-from xgboost import XGBRegressor
+import dataScrubbing as ds
 from sklearn.multioutput import MultiOutputRegressor
+from xgboost import XGBRegressor
+from xgboost import XGBModel
 from sklearn import metrics
-import datetime
-import random
+from sklearn.preprocessing import Imputer
+import numpy as np
+import json
 
-random.seed(datetime.datetime.now())
+infoIndexPath = '../util/infoIndex.json'
 
-def loadData(filePath):
-    pass
-
-def multiXGBoost(x_train, y_train, \
-                 max_depth=3, learning_rate=0.01, n_estimators=10, gamma=0):
+def multiXGBoost(max_depth=4, learning_rate=0.1, n_estimators=100):
+    X_train = np.load('X.npy')
+    y_train = np.load('y.npy')
+    y_train = y_train[:,5]
     
     xlf = XGBRegressor(max_depth=max_depth, 
                         learning_rate=learning_rate, 
                         n_estimators=n_estimators, 
-                        silent=True, 
                         objective='reg:linear', 
-                        gamma=gamma,
-                        min_child_weight=1, 
-                        max_delta_step=0, 
+                        n_jobs=64,
                         subsample=0.85, 
-                        colsample_bytree=0.8, 
-                        colsample_bylevel=1, 
+                        colsample_bytree=0.85, 
+                        colsample_bylevel=1.0, 
                         reg_alpha=0, 
-                        reg_lambda=1, 
-                        seed=random.randint(0,10000), 
-                        missing=-9999.)
+                        reg_lambda=100, 
+                        scale_pos_weight=1, 
+                        random_state=1000)
     
-    clf = MultiOutputRegressor(xlf)
-    clf.fit(x_train, y_train)
+    #clf = MultiOutputRegressor(xlf)
+    #clf.fit(X, y)
+    xlf.fit(X_train, y_train)
+    return xlf
+    
+def train(X_test, y_test):
+    
+    X_train = np.load('X.npy')
+    y_train = np.load('y.npy')
+    y_train = y_train[:,1]
+    param_dist = {'objective':'reg:linear', \
+                  'max_depth':5, \
+                  'eta':0.05, \
+                  'colsample_bytree':1, \
+                  'n_estimators':50, 
+                  }
+    clf = XGBModel(**param_dist)
+    clf.fit(X_train, y_train,
+        eval_set=[(X_train, y_train),(X_test, y_test)],
+        eval_metric='rmse',
+        verbose=True)
+
     return clf
 
-def predict(multiOutputRe, x_test, y_test):
-    y_pred = multiOutputRe.predict(x_test)
-    
-    print(y_pred[0])
-    cost = metrics.mean_squared_error(y_pred, y_test)
-    cost = cost ** 0.5
-    print(cost)
-
 if __name__ == '__main__':
-    #multiXGBoost(X, y)
-    cost = metrics.mean_squared_error([[-1,-1],[2,2],[3,3]], [[3,3],[4,4],[5,5]])
-    print(cost)
+    with open(infoIndexPath, 'r') as f:
+        infoIndex = json.load(f)
+    imp = Imputer(missing_values=-9999.)
+    validationPath = '../transform_data/validation/station_90001.npy'
+    
+    vdata = np.load(validationPath)[-1]
+    vdata = imp.fit_transform(vdata)
+    X = vdata[13:][:,:29] \
+    [:,[infoIndex['t2m_M'], infoIndex['rh2m_M'], infoIndex['w10m_M']]].flatten()[np.newaxis,:]
+    
+    #X = np.concatenate((x1,x2))[np.newaxis,:]
+    y = vdata[13:, \
+               [infoIndex['t2m_obs'], infoIndex['rh2m_obs'], infoIndex['w10m_obs']]]
+    y_train = np.load('y.npy')
+    y = vdata[13,infoIndex['rh2m_obs']]
+    y = y.flatten()
+    #print(X.shape, y.shape)
+   
+    clf = train(X, y)
+    print(clf.evals_result())
+    
+    #clf = multiXGBoost()
+    
+    y_pred = clf.predict(X)
+    print(y)
+    print(y_pred)
+    cost = metrics.mean_squared_error(y, y_pred)
+    print('model cost : %.4f' % cost)
+    
+

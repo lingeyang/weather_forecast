@@ -2,53 +2,36 @@
 
 #use the last day's info to predict
 from sklearn.preprocessing import Imputer
+from sklearn import metrics
 import numpy as np
 import os
 import json
 
 infoIndexPath = './util/infoIndex.json'
 
-def getScore(dirPath, nTimes):
-    cost = 0.0
-    t2m_score = 0.0
-    rh2m_score = 0.0
-    w10m_score = 0.0
-    
+def metricsGetCost(dirPath, nTimes):
     with open(infoIndexPath,'r') as f:
         infoIndex = json.load(f)
-    files = os.listdir(dirPath)
-    stations = len(files)
     
+    cost = 0.0
     imp = Imputer(missing_values=-9999., strategy='mean', axis=0)
     
-    for file in files:
+    files = os.listdir(dirPath)
+    for file in files[:1]:
         filePath = dirPath + os.sep + file
-        data = np.load(filePath)[-1]
+        data = np.load(filePath)[-1][37-nTimes:]
         data = imp.fit_transform(data)
-        #print(data[data[:,:] == -9999.0])
-        t2m = data[:,infoIndex['t2m_obs']][37-nTimes:] - data[:,infoIndex['t2m_M']][37-nTimes:]
-        rh2m = data[:,infoIndex['rh2m_obs']][37-nTimes:] - data[:,infoIndex['rh2m_M']][37-nTimes:]
-        w10m = data[:,infoIndex['w10m_obs']][37-nTimes:] - data[:,infoIndex['w10m_M']][37-nTimes:]
- 
-        #print(data[:,infoIndex['rh2m_obs']][37-nTimes:])
-        #print(data[:,infoIndex['rh2m_M']][37-nTimes:])
-        #print(rh2m)
-        t2m_score += sum(t2m**2)
-        rh2m_score += sum(rh2m**2)
-        w10m_score += sum(w10m**2)
-        #print(t2m_score, rh2m_score, w10m_score)
-        
-    cost = (t2m_score/(nTimes*stations)) ** 0.5 + \
-            (rh2m_score/(nTimes*stations)) ** 0.5 + \
-            (w10m_score/(nTimes*stations)) ** 0.5
-    cost = cost / 3
-    #print(score)
-    return cost
-    
+        y = data[:,[infoIndex['t2m_obs'], infoIndex['rh2m_obs'], infoIndex['w10m_obs']]]
+        y_pred = data[:,[infoIndex['t2m_M'], infoIndex['rh2m_M'], infoIndex['w10m_M']]]
+        tmp_cost = metrics.mean_squared_error(y, y_pred) * nTimes
+        bcost = metrics.mean_squared_error(y.flatten(), y_pred.flatten())
+        cost += tmp_cost
+        #print(y)
+        print('baseline cost : %.4f' % (bcost))
+    cost = (cost/(nTimes*len(files))) ** 0.5
+    #print(cost)
+
 if __name__ == '__main__':
     dirPath = './transform_data/validation'
-    getScore(dirPath, 24)
-
-
-
+    metricsGetCost(dirPath, 24)
 
