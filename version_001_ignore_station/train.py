@@ -84,12 +84,3 @@ if __name__ == '__main__':
     print('model cost : %.4f' % cost)
     
 
-
-
-
-
-
-
-
-
-

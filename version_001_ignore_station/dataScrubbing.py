@@ -41,10 +41,8 @@ def getTrainFeature(trainSetDir, nTimes):
     np.save('y.npy',y)
     return X, y
 
-
 if __name__ == '__main__':
     trainSetPath = '../transform_data/trainingset'
     getTrainFeature(trainSetPath,24)
-
 
 
