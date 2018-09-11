@@ -9,7 +9,7 @@ import json
 infoIndexPath = './util/infoIndex.json'
 
 def getScore(dirPath, nTimes):
-    score = 0.0
+    cost = 0.0
     t2m_score = 0.0
     rh2m_score = 0.0
     w10m_score = 0.0
@@ -38,12 +38,12 @@ def getScore(dirPath, nTimes):
         w10m_score += sum(w10m**2)
         #print(t2m_score, rh2m_score, w10m_score)
         
-    score = (t2m_score/(nTimes*stations)) ** 0.5 + \
+    cost = (t2m_score/(nTimes*stations)) ** 0.5 + \
             (rh2m_score/(nTimes*stations)) ** 0.5 + \
             (w10m_score/(nTimes*stations)) ** 0.5
-    score = score / 3
+    cost = cost / 3
     #print(score)
-    return score
+    return cost
     
 if __name__ == '__main__':
     dirPath = './transform_data/validation'
