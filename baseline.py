@@ -26,7 +26,7 @@ def metricsGetCost(dirPath, nTimes):
         tmp_cost = metrics.mean_squared_error(y, y_pred) * nTimes
         bcost = metrics.mean_squared_error(y.flatten(), y_pred.flatten())
         cost += tmp_cost
-        print(y)
+        print(y, y_pred)
         print('baseline cost : %.4f' % (bcost))
     cost = (cost/(nTimes*len(files))) ** 0.5
     #print(cost)

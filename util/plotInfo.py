@@ -6,12 +6,7 @@ from sklearn.preprocessing import Imputer
 import json
 import random
 
-infoIndexPath = 'infoIndex.json'
-
-def fillWithDefaultValue():
-    pass
-
-def visualization(filePath, weatherInfo):
+def visualization(filePath, weatherInfo, infoIndexPath):
     with open(infoIndexPath, 'r') as f:
         infoIndex = json.load(f)
     imp = Imputer(missing_values=-9999.0)
@@ -32,6 +27,10 @@ def visualization(filePath, weatherInfo):
     ax_00_rh2m_obs = ax_00_data[:,infoIndex[rh2m_obs]]
     ax_00_w10m_obs = ax_00_data[:,infoIndex[w10m_obs]]
     plt.plot(range(ax_00_lenth),ax_00_t2m_obs)
+    plt.plot(range(ax_00_lenth),ax_00_rh2m_obs)
+    plt.plot(range(ax_00_lenth),ax_00_w10m_obs)
+    #plt.plot(range(ax_00_lenth),ax_00_data[:,infoIndex[weatherInfo]])
+
     plt.show()
     '''
     data = data.reshape((dayDim*timeDim, featureDim))
@@ -44,8 +43,9 @@ def visualization(filePath, weatherInfo):
 
 if __name__ == '__main__':
     trainSetPath = '../transform_data/trainingset/station_90009.npy'
-    weatherInfo = 't2m_obs'
-    visualization(trainSetPath, weatherInfo)
+    infoIndexPath = 'infoIndex.json'
+    weatherInfo = 'psur_obs'
+    visualization(trainSetPath, weatherInfo, infoIndexPath)
     
 
 
