@@ -50,25 +50,24 @@ def transformData(filePath,dumpDir,infoConfPath):
         feature = dataArray.reshape((dayDim*timeDim, 10)).T
         featureTuple.append(feature)
         
-    print(np.array(featureTuple).shape)
     res = np.stack(featureTuple,axis=1)
-    print(res.shape)
-    '''
+    
     for station in range(stationDim):
         sdata = res[station].T
         
         sdata = sdata.reshape((dayDim, timeDim, len(info)))
         dumpPath = '%s/station_%d.npy' % (dumpDir, 90001+station)
         np.save(dumpPath,sdata)
-    '''
+    
 if __name__ == "__main__":
-    filePath = '../data/ai_challenger_wf2018_trainingset_20150301-20180531.nc'
-    dumpDir = '../transform_data/trainingset'
+    pass
+    #filePath = '../data/ai_challenger_wf2018_trainingset_20150301-20180531.nc'
+    #dumpDir = '../transform_data/trainingset'
     
     #filePath = '../data/ai_challenger_wf2018_validation_20180601-20180828_20180905.nc'
     #dumpDir = '../transform_data/validation'
 
-    infoConf = 'infoConf.npy'
+    #infoConf = 'infoConf.npy'
     # run this function
     #transformData(filePath, dumpDir, infoConf)
     
