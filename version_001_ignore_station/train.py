@@ -40,10 +40,11 @@ def train(X_test, y_test):
     y_train = np.load('y.npy')
     y_train = y_train[:,1]
     param_dist = {'objective':'reg:linear', \
-                  'max_depth':5, \
-                  'eta':0.05, \
-                  'colsample_bytree':1, \
-                  'n_estimators':50, 
+                  'max_depth':100, \
+                  'eta':0.0001, \
+                  'colsample_bytree':0.5, \
+                  'n_estimators':10, \
+                  'lambda':700
                   }
     clf = XGBModel(**param_dist)
     clf.fit(X_train, y_train,
@@ -59,7 +60,7 @@ if __name__ == '__main__':
     imp = Imputer(missing_values=-9999.)
     validationPath = '../transform_data/validation/station_90001.npy'
     
-    vdata = np.load(validationPath)[-1]
+    vdata = np.load(validationPath)[-3]
     vdata = imp.fit_transform(vdata)
     X = vdata[13:][:,:29] \
     [:,[infoIndex['t2m_M'], infoIndex['rh2m_M'], infoIndex['w10m_M']]].flatten()[np.newaxis,:]
@@ -83,13 +84,4 @@ if __name__ == '__main__':
     cost = metrics.mean_squared_error(y, y_pred)
     print('model cost : %.4f' % cost)
     
-
-
-
-
-
-
-
-
-
 
