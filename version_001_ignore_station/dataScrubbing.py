@@ -51,7 +51,8 @@ def __getTrainFeature(dataDir, infoIndexPath, nTimes=24):
     return X, y
 
 
-def getFeature():
+def dataScrub():
+   
     TrainingPath=r"../transform_data/trainingset/station_900"
     WindowSize=0
     f = open(r"../util/infoIndex.json")
@@ -98,6 +99,7 @@ def getFeature():
                     m.append(context[loop + WindowSize][i][infoIndex['rh2m_obs']])
                     m.append(context[loop + WindowSize][i][infoIndex['w10m_obs']])
                 datay.append(m)
+
     np.save("datax.npy",datax)
     np.save("datay.npy",datay)
 
