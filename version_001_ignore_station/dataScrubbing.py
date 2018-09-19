@@ -4,7 +4,7 @@ import numpy as np
 import json
 import os
 #from sklearn.preprocessing import Imputer
-from util.preprocessing import fillWithDefaultValue
+#from util.preprocessing import fillWithDefaultValue
 
 '''
 this function is duplicate
@@ -21,35 +21,39 @@ def __getTrainFeature(dataDir, infoIndexPath, nTimes=24):
     for file in files:
         trainSetPath = dataDir + os.sep + file
         allDaysData = np.load(trainSetPath)
-        
+        where_are_nan = np.isnan(allDaysData)
+        allDaysData[where_are_nan] = -9999.
         dataLen = len(allDaysData)
+        
         for index in range(1,dataLen):
-            data = fillWithDefaultValue(allDaysData[index])
-            if data.shape[1] < len(infoIndex):
-                continue
+            data = allDaysData[index]
             label = data[foretimes-nTimes:] \
                         [:,[infoIndex['t2m_obs'], infoIndex['rh2m_obs'], infoIndex['w10m_obs']]]
             label = label.T.flatten()
-            label = label[np.newaxis,:]
             if -9999. in label:
                 continue
+            label = label[np.newaxis,:]
+            '''
             x1 = data[:foretimes-nTimes]
             x1 = x1.flatten()
             x2 = data[foretimes-nTimes:][:,:infoIndex['psur_obs']]
             x2 = x2.flatten()
             x = np.concatenate((x1, x2))
+            '''
+            x = data[foretimes-nTimes:] \
+            [:,infoIndex['rh2m_M']]
+            x = x.flatten()
             feature = x[np.newaxis,:]
             
             X = np.concatenate((X, feature)) if len(X) != 0 else feature
             y = np.concatenate((y, label)) if len(y) != 0 else label
-    
-    #print(isn)
+        
+    #print(np.any(np.isnan(X)))
     #print(X.shape)
     #print(y.shape)
     #np.save('X.npy',X)
     #np.save('y.npy',y)
     return X, y
-
 
 def dataScrub():
    
@@ -94,19 +98,19 @@ def dataScrub():
                             for j in context[day][i]:
                                 l.append(j)
                 datax.append(l)
-                for i in  range(repeatTimes,foreTimes):
-                    m.append(context[loop+WindowSize][i][infoIndex['t2m_obs']])
-                    m.append(context[loop + WindowSize][i][infoIndex['rh2m_obs']])
-                    m.append(context[loop + WindowSize][i][infoIndex['w10m_obs']])
-                datay.append(m)
-
-    np.save("datax.npy",datax)
-    np.save("datay.npy",datay)
+                if (loop+WindowSize)<len(context):
+                    for i in  range(repeatTimes,foreTimes):
+                        m.append(context[loop+WindowSize][i][infoIndex['t2m_obs']])
+                        m.append(context[loop + WindowSize][i][infoIndex['rh2m_obs']])
+                        m.append(context[loop + WindowSize][i][infoIndex['w10m_obs']])
+                    datay.append(m)
+    np.save("X.npy",datax)
+    np.save("y.npy",datay)
 
 if __name__ == '__main__':
     trainSetPath = '../transform_data/trainingset'
     infoIndexPath = '../util/infoIndex.json'
-    #__getTrainFeature(trainSetPath,infoIndexPath)
-    
+    __getTrainFeature(trainSetPath,infoIndexPath)
+    #dataScrub()
 
 

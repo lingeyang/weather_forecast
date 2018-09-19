@@ -2,50 +2,49 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import Imputer
 import json
-import random
+import preprocessing
 
-def visualization(filePath, weatherInfo, infoIndexPath):
+def visualization(filePath, weatherInfo, infoIndexPath, day):
     with open(infoIndexPath, 'r') as f:
         infoIndex = json.load(f)
-    imp = Imputer(missing_values=-9999.0)
+
     t2m_obs, rh2m_obs, w10m_obs = 't2m_obs', 'rh2m_obs', 'w10m_obs'
     
     data = np.load(filePath)
     (dayDim, timeDim, featureDim) = data.shape
-    day = random.randint(0,dayDim)
+    data = preprocessing.fillWithDefaultValue(data[day-1])
+    if data.shape[1] != featureDim:
+        print('too many default values')
+        return
+    dataLenth = len(data)
     
-    fig = plt.figure(figsize=(10,10))
-    fig.suptitle(weatherInfo)
+    fig = plt.figure(figsize=(10,5))
+    fig.suptitle(str(day)+' day')
     
-    plt.subplot(221)
+    plt.subplot(121)
+    plt.title(weatherInfo+':plot')
+    plt.plot(range(dataLenth),data[:,infoIndex[weatherInfo]])
+    
+    plt.subplot(122)
     plt.title('variety')
-    ax_00_data = data[day]
-    ax_00_lenth = len(ax_00_data)
-    ax_00_t2m_obs = ax_00_data[:,infoIndex[t2m_obs]]
-    ax_00_rh2m_obs = ax_00_data[:,infoIndex[rh2m_obs]]
-    ax_00_w10m_obs = ax_00_data[:,infoIndex[w10m_obs]]
-    plt.plot(range(ax_00_lenth),ax_00_t2m_obs)
-    plt.plot(range(ax_00_lenth),ax_00_rh2m_obs)
-    plt.plot(range(ax_00_lenth),ax_00_w10m_obs)
-    #plt.plot(range(ax_00_lenth),ax_00_data[:,infoIndex[weatherInfo]])
+    ax_00_t2m_obs = data[:,infoIndex[t2m_obs]]
+    ax_00_rh2m_obs = data[:,infoIndex[rh2m_obs]]
+    ax_00_w10m_obs = data[:,infoIndex[w10m_obs]]
+    pt, =plt.plot(range(dataLenth),ax_00_t2m_obs)
+    pr, =plt.plot(range(dataLenth),ax_00_rh2m_obs)
+    pw, =plt.plot(range(dataLenth),ax_00_w10m_obs)
+    plt.legend([pt, pr, pw], [t2m_obs, rh2m_obs, w10m_obs], loc='upper right')
 
     plt.show()
-    '''
-    data = data.reshape((dayDim*timeDim, featureDim))
-    info = data[:, infoIndex[weatherInfo]][np.newaxis,:]
-    info = imp.fit_transform(info)
-    
-    
-    plt.hist(info[0],50,density=1,histtype='stepfilled',alpha=0.75)
-    '''
 
+    
 if __name__ == '__main__':
-    trainSetPath = '../transform_data/trainingset/station_90009.npy'
+    trainSetPath = '../transform_data/validation/station_90008.npy'
     infoIndexPath = 'infoIndex.json'
-    weatherInfo = 'psur_obs'
-    visualization(trainSetPath, weatherInfo, infoIndexPath)
+    weatherInfo = 'rh2m_obs'
+    day = 4
+    visualization(trainSetPath, weatherInfo, infoIndexPath, day)
     
 
 
